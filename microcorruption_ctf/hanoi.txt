@@ -1,0 +1,1 @@
+Just add a password with 17 chars, the last one being m. The length is not checked. The hack is due to "cmp.b #0x6d, &0x2410" where &0x2410 is the 17th char.
