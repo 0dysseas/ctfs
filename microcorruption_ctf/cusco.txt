@@ -1,0 +1,11 @@
+Looking at the code we can see that the if r15 != 0 then the tst r15 instruction is not zero and the door gets unlocked.
+
+The problem is that in order for the r15 to be other than zero we need to control the bitsdefined by the -0x4(r4) operand in the mov.b -0x4(r4), r15 instruction. But we cannot directly alter this operand to solve this (setting the -0x4(r4) using the l command is good only for the debug case). So this doesn't work.
+
+However, further on we can see that towards the end of the login function, the stack pointer (sp) is increased by 0x10 (add #0x10, sp instruction). Looking at the live memory dump we can see that this increase moves the sp after our password, we have given a password of AABBCCDD but that's irrelevant; the important thing is to notice that sp is moved after our password. So since after that instruction the login function returns (ret) the address of the sp will be used as the address to return to.
+
+This means that if we can add in the sp register the address of the unlock_door function, then when login returns (ret) this address will be invoked and the door will be unlocked. We will have then, smashed the stack.
+
+Thus if we give a long enough password that its final part will be the address of the unlock_door function, when the sp will be increased by 0x10 it will point to that address so ret will return there. So the answer (in hex) should be aabbccddffaabbccddffaabbccddeebb4644. The part before 4644 is irrelevant; it just needs to be in hex (so we can see it easier in the memory dump) and of that specific length (in order for the 4446 -little endian- address to be called upon ret).
+
+
