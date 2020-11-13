@@ -1,0 +1,5 @@
+We can see that there's a call to strcpy, which is inherently unsafe if the length of the destination pointer is not checked.
+Indeed we can see that strcpy copies our input to the r15 register without enforcing a limit. So at first we pass a really long hex password. Moving on we can see that
+after the input is rejected as not being correct, there's a cmp.b #0xf2 0x11(sp) which if true moves the stack pointer 12 bytes and gives us access to the ret address. 
+0x11(sp) coincides with a point in our very long password and if we make sure that this char is 0xf2 we can gain access to the ret address which we can exploit by passing the address of unlock_door() (4446 in little endian). So the answer is: 4142434445464748494a41424344454647f24644
+
