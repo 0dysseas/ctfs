@@ -1,0 +1,15 @@
+Encryption- No password prompt provided in debug mode
+
+enc():
+  . 1st loop is:0x4490-449a
+  . for 256 times (increase r13 by 0x100):
+    add one byte to 0x247c
+  . move 0x247c to r12. So r12 contains 100 bytes (0-100, in hex)
+  
+  . 2nd loop: 44a4-44d0 (256 times)
+  . move byte by byte of 'ThisIsSecureRight?' to r10 (i.e. each char)
+  . add 0x247c to each char of the above string
+  . then take the output of the addition and add it to r9
+  . then fill r10 and r12 with the contents of r8 and r9 byte by byte
+
+Turns out enc() is a decoy- Upon entering a password we can see that there's a call to a specific memory address the body of which is populated only when the password is entered (due to a copy_data call). After that and using the debugger we can see that there's a cmp instruction which examines if the first two bytes of our code are equal to 3384. If yes, door unlocks. So the password is 0x3384.
