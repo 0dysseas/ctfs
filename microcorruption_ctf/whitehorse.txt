@@ -1,0 +1,14 @@
+stack pointer points at an "illegal" area in memory (452a #0x10 sp), so we can overflow it. Thus if we pass a password long enough () we can access that area.
+The thing is that there's no "unlock" function to pass in that area- but we can pass the system call of the interrupt that directly unlocks the lock 
+(0x7f- written in the manual). The way to pass it is already in the code: It's identical to the 0x7e call. 
+The 0x7e call is placed at the 445c memory address, so that's where we need to place our 0x7f call. Thus code for the call INT is 30127f00b0123245
+
+The size of our shellcode is 8 bytes. We can see that the password buffer starts at 0x3292 and that bytes 9 and 10 corrupt the stack, so we need to pass at that position (which we control) the starting memory address of the buffer to jump back to so that our shellcode gets executed. Schematically:
+
+mem_address: 0x3292   + 8 bytes    +  adress_we_control
+payload:    shellcode + random_hex + 0x3292
+
+So when the stack pointer will point to the corrupted position (i.e. address we control) the 0x3292 will be executed thus the flow will jump to that address, which is the start of our 
+buffer. The payload of that address will be our shellcode, thus the door will get unlocked
+
+So the answer is: 30127f00b012324541414141414141413292
