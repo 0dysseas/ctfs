@@ -1,0 +1,9 @@
+There's a stack buffer overflow we can exploit at 0x4400 memory address created by providing a password that exceeds this point. So we can pass the 0x7f INT as our shellcode in order to
+open the door.
+However we cannot pass our shellcode at the start of our password buffer because the memcopy function doesn't copy any code after 00. So our shellcode to open the door will not be
+passed as is and will be stopped after 00.
+
+We can see though that when making a system call right before the interrupt is called the call ID is passed on the stack. We can see at which point in the stack this is passed on
+simply by looking the original INT in code. More specifically the call ID is accessed at 0x2(sp). So we must make sure that our exploit has the 0x7f at this point. So we can pass:
+41414141414141414141414130127f414c4543437f00 (important part being the position of the last 2 bytes) and door unlocks
+

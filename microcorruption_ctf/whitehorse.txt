@@ -11,4 +11,4 @@ payload:    shellcode + random_hex + 0x3292
 So when the stack pointer will point to the corrupted position (i.e. address we control) the 0x3292 will be executed thus the flow will jump to that address, which is the start of our 
 buffer. The payload of that address will be our shellcode, thus the door will get unlocked
 
-So the answer is: 30127f00b012324541414141414141413292
+So the answer is: 30127f00b012324541414141414141419232
